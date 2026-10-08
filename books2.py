@@ -19,11 +19,22 @@ class Book:
         self.rating = rating
 
 class BookRequest(BaseModel):
-    id: Optional[int] = None
+    id: Optional[int] = Field(description="Id is not needed on create", default=None)
     title: str = Field(min_length=1)
     author: str = Field(min_length=1)
     description: str = Field(min_length=1, max_length=200)
     rating: float = Field(ge=0, le=5)
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "title": "A new book",
+                "author": "Amjad",
+                "description": "A new description of a book",
+                "rating": 5
+            }
+        }
+    }
 
 BOOKS = [
     Book(1, "The Midnight Library", "Matt Haig", "Between life and death there is a library containing an infinite number of books, each one the story of another reality you could have lived if you had made a different choice", 4.3),
