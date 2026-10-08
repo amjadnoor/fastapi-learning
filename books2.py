@@ -1,4 +1,5 @@
 from fastapi import Body, FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -16,6 +17,13 @@ class Book:
         self.description = description
         self.rating = rating
 
+class BookRequest(BaseModel):
+    id: int
+    title: str
+    author: str
+    description: str
+    rating: float
+
 BOOKS = [
     Book(1, "The Midnight Library", "Matt Haig", "Between life and death there is a library containing an infinite number of books, each one the story of another reality you could have lived if you had made a different choice", 4.3),
     Book(2, "Where the Crawdads Sing", "Delia Owens", "A touching coming-of-age story and a surprising murder mystery centered around Kya Clark, the 'Marsh Girl' who grew up isolated in the North Carolina wild", 4.5),
@@ -30,5 +38,6 @@ async def read_all_books():
     return BOOKS
 
 @app.post("/create-book")
-async def create_book(book_request=Body()):
-    BOOKS.append(book_request)
+async def create_book(book_request: BookRequest):
+    new_book = Book(**book_request.model_dump())
+    BOOKS.append(new_book)
