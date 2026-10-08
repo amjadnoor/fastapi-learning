@@ -1,5 +1,5 @@
-from fastapi import Body, FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
@@ -19,10 +19,10 @@ class Book:
 
 class BookRequest(BaseModel):
     id: int
-    title: str
-    author: str
-    description: str
-    rating: float
+    title: str = Field(min_length=1)
+    author: str = Field(min_length=1)
+    description: str = Field(min_length=1, max_length=200)
+    rating: float = Field(ge=0, le=5)
 
 BOOKS = [
     Book(1, "The Midnight Library", "Matt Haig", "Between life and death there is a library containing an infinite number of books, each one the story of another reality you could have lived if you had made a different choice", 4.3),
@@ -40,4 +40,12 @@ async def read_all_books():
 @app.post("/create-book")
 async def create_book(book_request: BookRequest):
     new_book = Book(**book_request.model_dump())
-    BOOKS.append(new_book)
+    BOOKS.append(find_book_id(new_book))
+
+def find_book_id(book: Book):
+    if len(BOOKS) > 0:
+        book.id = BOOKS[-1].id + 1
+    else:
+        book.id = 1
+
+    return book
