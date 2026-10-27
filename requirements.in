@@ -7,3 +7,4 @@ python-jose[cryptography]
 psycopg[binary]
 pymysql
 alembic
+pytest
