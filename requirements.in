@@ -8,3 +8,4 @@ psycopg[binary]
 pymysql
 alembic
 pytest
+httpx2
