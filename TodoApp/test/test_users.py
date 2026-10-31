@@ -17,3 +17,16 @@ def test_get_user(test_user):
     assert response.json()['id'] == 1
     assert bcrypt_context.verify('test@123', response.json()['hashed_password'])
     assert response.json()['is_active'] == True
+
+def test_change_password_success(test_user):
+    response = client.put('/user/password', json={'password': 'test@123', 'new_password': 'test@12345'})
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+def test_change_password_invalid_current_password(test_user):
+    response = client.put('/user/password', json={'password': 'wrong_password', 'new_password': 'test@12345'})
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.json() == {'detail': 'Error on password change'}
+
+def test_change_phone_number(test_user):
+    response = client.put('/user/phonenumber/2345678901')
+    assert response.status_code == status.HTTP_204_NO_CONTENT
