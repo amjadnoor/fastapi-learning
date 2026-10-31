@@ -9,3 +9,4 @@ pymysql
 alembic
 pytest
 httpx2
+pytest-asyncio
